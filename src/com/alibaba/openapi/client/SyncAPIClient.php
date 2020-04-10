@@ -23,16 +23,16 @@ class SyncAPIClient {
 	}
 
 
-	public function execute($namespace, $apiName, $version, $requestDefiniation, $resultDefiniation, $accessToken) {
+	public function execute($namespace, $apiName, $version, $requestDefiniation, $accessToken) {
 	    $apiRequest = new APIRequest();
 	    $apiId = new APIId($namespace, $apiName, $version);
 	    $apiRequest->apiId = $apiId;
 	    $apiRequest->accessToken = $accessToken;
 	    $apiRequest->requestEntity = $requestDefiniation;
-	    return $this->send($apiRequest, $resultDefiniation, new RequestPolicy());
+	    return $this->send($apiRequest, new RequestPolicy());
 	}
 
-	public function send(APIRequest $request, $resultDefiniation, RequestPolicy $requestPolicy) {
+	public function send(APIRequest $request, RequestPolicy $requestPolicy) {
 		$urlRequest = $this->generateRequestPath($request, $requestPolicy, $this->clientPolicy);
 		if ($requestPolicy->useHttps) {
 			if($this->clientPolicy->httpsPort==443){
@@ -83,8 +83,6 @@ class SyncAPIClient {
 			curl_setopt ( $ch, CURLOPT_POST, 0 );
 			curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
 			curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
-
-			//$result = $newclient->get( $urlRequest, $requestData );
 		} else {
 			curl_setopt ( $ch, CURLOPT_URL, $urlRequest );
 			curl_setopt ( $ch, CURLOPT_HEADER, false );
@@ -94,26 +92,11 @@ class SyncAPIClient {
 			curl_setopt ( $ch, CURLOPT_POSTFIELDS, $paramToSign );
 			curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
 			curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
-			//$data = curl_exec ( $ch );
 		}
-		$data = curl_exec ( $ch );
-		if ($data) {
-			$content = $data;
-			$deSerializerTools = SerializerProvider::getDeSerializer ( $requestPolicy->responseProtocol );
-			$status = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
-			curl_close ( $ch );
-			if ($status >= 400 && $status <= 599) {
-				$resultException = $deSerializerTools->buildException ( $content, $resultDefiniation );
-				throw $resultException;
-			} else {
-				$resultDefiniation = $deSerializerTools->deSerialize ( $content, $resultDefiniation );
-				return $resultDefiniation;
-			}
-		} else {
-			$status = curl_getinfo ( $ch, CURLINFO_HTTP_CODE );
-			curl_close ( $ch );
-			return $status;
-		}
+		$content = curl_exec ( $ch );
+		curl_close( $ch );
+		return $content;
+
 	}
 	private function generateRequestPath(APIRequest $request, RequestPolicy $requestPolicy, ClientPolicy $clientPolicy) {
 		$urlResult = "";
