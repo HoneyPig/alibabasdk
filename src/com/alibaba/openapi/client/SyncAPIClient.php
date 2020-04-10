@@ -32,7 +32,7 @@ class SyncAPIClient {
 	    return $this->send($apiRequest, new RequestPolicy());
 	}
 
-	public function send(APIRequest $request, RequestPolicy $requestPolicy) {
+	public function send(APIRequest $request, RequestPolicy $requestPolicy, $toArray = true) {
 		$urlRequest = $this->generateRequestPath($request, $requestPolicy, $this->clientPolicy);
 		if ($requestPolicy->useHttps) {
 			if($this->clientPolicy->httpsPort==443){
@@ -95,7 +95,7 @@ class SyncAPIClient {
 		}
 		$content = curl_exec ( $ch );
 		curl_close( $ch );
-		return $content;
+		return $toArray ? json_decode($content,true) : $content;
 
 	}
 	private function generateRequestPath(APIRequest $request, RequestPolicy $requestPolicy, ClientPolicy $clientPolicy) {
