@@ -1,0 +1,19 @@
+{
+    "name": "chenzhi/alibabasdk",
+    "description": "just do it",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "chenzhi",
+            "email": "104502256@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "com": "src/"
+        }
+    }
+}
