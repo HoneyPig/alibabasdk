@@ -1,7 +1,8 @@
 <?php
+namespace com\alibaba\product\param;
 
-include_once ('com/alibaba/openapi/client/entity/SDKDomain.class.php');
-include_once ('com/alibaba/openapi/client/entity/ByteArray.class.php');
+use com\alibaba\openapi\client\entity\SDKDomain;
+use com\alibaba\openapi\client\entity\ByteArray;
 
 class AlibabaProductListGetParam {
 
